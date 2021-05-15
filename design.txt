@@ -1,0 +1,9 @@
+Entities
+- Calendar board
+- Event
+
+Actions
+- Create an event on a specific date
+- Update an event on a specific date
+- Delete an event on a specific date
+- View an event on a specific date
