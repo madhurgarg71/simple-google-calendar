@@ -17,7 +17,8 @@
 
 ### Clone the repo
 
-    git clone
+    git clone https://github.com/madhurgarg71/simple-google-calendar.git
+    cd simple-google-calendar
 
 ### Install dependencies
 
