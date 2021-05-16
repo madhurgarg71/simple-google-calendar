@@ -5,9 +5,10 @@
 - [x] Week view with default week set to current week
 - [x] Navigate to previous/next week
 - [x] Create an event at nearest hourly time slot or on a specfic
-       date/time. (default 1hr)
-- [x] View any event
-- [ ] Re-schedule an event
+      date/time. (default 1hr)
+- [x] View any event on the calendar
+- [x] Re-schedule an event
+- [x] Delete an event
 
 ## Setup
 

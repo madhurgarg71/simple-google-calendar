@@ -9,8 +9,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { TextField, makeStyles } from "@material-ui/core";
+import { TextField, makeStyles, Grid, Typography } from "@material-ui/core";
 import dayjs from "dayjs";
+import { Delete } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   toDate: {
@@ -22,13 +23,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function EditEventPopup(props, ref) {
-  const { isOpen = true, onClose, onSave, event } = props;
+  const { isOpen = true, onClose, onSave, event, onDelete } = props;
 
   const [from, setFrom] = useState(event.fromDate);
   const [to, setTo] = useState(event.toDate);
   const [title, setTitle] = useState(event.title);
   const [fromDateError, setFromDateError] = useState();
   const classes = useStyles();
+
+  const handleDeleteEvent = () => {
+    onDelete(event.id);
+    onClose();
+  };
 
   const handleClose = () => {
     onClose();
@@ -89,7 +95,23 @@ function EditEventPopup(props, ref) {
   return (
     <div>
       <Dialog className={classes.root} open={isOpen} onClose={handleClose}>
-        <DialogTitle>Edit event</DialogTitle>
+        <DialogTitle>
+          <Grid container justify="space-between" alignItems="center">
+            <Grid item>
+              <Typography variant="h6">Edit event</Typography>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={handleDeleteEvent}
+                variant="text"
+                color="secondary"
+                startIcon={<Delete />}
+              >
+                Delete
+              </Button>
+            </Grid>
+          </Grid>
+        </DialogTitle>
         <DialogContent>
           <TextField
             value={title}

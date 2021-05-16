@@ -50,13 +50,24 @@ function CalendarMain() {
     callback();
   };
 
+  const deleteEvent = (id) => {
+    const updatedEventsData = eventsData.filter((event) => event.id !== id);
+    setEventsData(updatedEventsData);
+  };
+
   const getEvent = (id) => {
     return eventsData.find((event) => event.id === id);
   };
 
   return (
     <CalendarContext.Provider
-      value={{ eventsData, createEvent, getEvent, editEvent }}
+      value={{
+        eventsData,
+        createEvent,
+        getEvent,
+        editEvent,
+        deleteEvent,
+      }}
     >
       <CalendarBoard>
         <WeekViewMain />

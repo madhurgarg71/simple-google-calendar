@@ -53,7 +53,7 @@ function WeekViewMain(props) {
   const [selecetdToDate, setSelectedToDate] = useState();
   const [selectedEvent, setSelectedEvent] = useState();
   const [showSuccessAlert, setShowSuccessALert] = useState(false);
-  const { createEvent, editEvent } = useContext(CalendarContext);
+  const { createEvent, editEvent, deleteEvent } = useContext(CalendarContext);
   const classes = useStyles();
   const gridContainerRef = useRef();
   const eventPopupRef = useRef();
@@ -152,6 +152,7 @@ function WeekViewMain(props) {
           isOpen={true}
           event={selectedEvent}
           onClose={() => setSelectedEvent()}
+          onDelete={(eventId) => deleteEvent(eventId)}
           onSave={({ title, from, to }) =>
             editEvent(selectedEvent.id, { title, from, to }, onSuccess)
           }
