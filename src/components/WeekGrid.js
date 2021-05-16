@@ -4,7 +4,7 @@ import { getTimeSlots, isDateExistInWeek } from "../utils";
 import EventChip from "./EventChip";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
-import { useContext } from "react";
+import { useContext, useRef, useImperativeHandle, forwardRef } from "react";
 import { CalendarContext } from "../Context";
 import { TIME_SLOT_HEIGHT } from "../constants";
 
@@ -13,6 +13,9 @@ dayjs.extend(customParseFormat);
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 184,
+    overflowX: "hidden",
+    overflowY: "auto",
+    height: "calc(100vh - 184px)",
   },
   day: {
     width: "calc(100%/7)",
@@ -39,10 +42,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function DayColumn(props) {
-  const { classes } = props;
+  const { classes, day } = props;
   return (
     <Grid item className={classes.day}>
-      <DayTimeline />
+      <DayTimeline day={day} />
     </Grid>
   );
 }
@@ -67,15 +70,44 @@ function getCurrentWeekEvents(eventsData, activeWeek) {
   return currentWeekEvents;
 }
 
-function WeekGrid(props) {
-  const { activeWeek } = props;
+function WeekGrid(props, ref) {
+  const { activeWeek, openEventCreatePopup, openEventEditPopup } = props;
   const classes = useStyles();
+  const gridRef = useRef();
   const timeSlots = getTimeSlots();
-  const { eventsData } = useContext(CalendarContext);
+  const { eventsData, getEvent } = useContext(CalendarContext);
   const currentWeekEvents = getCurrentWeekEvents(eventsData, activeWeek);
 
+  const handleClick = (e) => {
+    const { from, to, eventid } = e.target.dataset;
+    if (eventid) {
+      const selectedEvent = getEvent(eventid);
+      openEventEditPopup(selectedEvent);
+    } else {
+      openEventCreatePopup(dayjs(from), dayjs(to));
+    }
+  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      scroll: function (amount) {
+        gridRef.current.scrollTo({
+          behavior: "smooth",
+          top: amount - 140,
+        });
+      },
+    }),
+    []
+  );
+
   return (
-    <div className={classes.root} id="week-grid">
+    <div
+      onClick={handleClick}
+      ref={gridRef}
+      className={classes.root}
+      id="week-grid"
+    >
       <Grid container justify="flex-start">
         <Grid item id="time-slots">
           {timeSlots.map((time, i) => (
@@ -85,13 +117,14 @@ function WeekGrid(props) {
         <Grid item className={classes.cells}>
           <Grid container justify="flex-start">
             {activeWeek.map((day, i) => (
-              <DayColumn key={i} classes={classes} />
+              <DayColumn day={day} key={i} classes={classes} />
             ))}
           </Grid>
 
           {currentWeekEvents.map((event) => (
             <EventChip
               key={event.id}
+              eventId={event.id}
               from={event.fromDate}
               to={event.toDate}
               title={event.title}
@@ -103,4 +136,4 @@ function WeekGrid(props) {
   );
 }
 
-export default WeekGrid;
+export default forwardRef(WeekGrid);

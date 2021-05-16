@@ -22,19 +22,42 @@ const dummyData = [
 
 function CalendarMain() {
   const [eventsData, setEventsData] = useState(dummyData);
-  const createEvent = (title, fromDate, toDate) => {
+  const createEvent = (details, callback) => {
+    const { title, from, to } = details;
     const newEvent = {
       id: uuidv4(),
       title,
-      fromDate,
-      toDate,
+      fromDate: from,
+      toDate: to,
     };
 
     setEventsData([...eventsData, newEvent]);
+    callback();
+  };
+
+  const editEvent = (id, details, callback) => {
+    const { title, from, to } = details;
+    const updatedEventsData = eventsData.map((event) => {
+      if (event.id === id) {
+        event.title = title;
+        event.fromDate = from;
+        event.toDate = to;
+      }
+      return event;
+    });
+
+    setEventsData(updatedEventsData);
+    callback();
+  };
+
+  const getEvent = (id) => {
+    return eventsData.find((event) => event.id === id);
   };
 
   return (
-    <CalendarContext.Provider value={{ eventsData, createEvent }}>
+    <CalendarContext.Provider
+      value={{ eventsData, createEvent, getEvent, editEvent }}
+    >
       <CalendarBoard>
         <WeekViewMain />
       </CalendarBoard>

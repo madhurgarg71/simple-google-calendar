@@ -2,7 +2,8 @@ import { getHourSlices } from "../utils";
 import HourSlice from "./HourSlice";
 
 function DayTimeline(props) {
-  const hourSlices = getHourSlices();
+  const { day } = props;
+  const hourSlices = getHourSlices(day);
 
   return (
     <div className="day-timeline">

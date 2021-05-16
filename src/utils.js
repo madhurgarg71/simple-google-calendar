@@ -51,10 +51,12 @@ export const getActiveMonthFromWeek = (week) => {
   return formattedMonths;
 };
 
-export const getHourSlices = () => {
+const newHour = (date, h) => dayjs(date).set("hour", h).set("minute", 0);
+
+export const getHourSlices = (date) => {
   const hourSlices = [];
   for (let i = 0; i < TOTAL_HOURS; i++) {
-    const slice = [i, i + 1];
+    const slice = [newHour(date, i), newHour(date, i + 1)];
     hourSlices.push(slice);
   }
   return hourSlices;
@@ -71,4 +73,14 @@ export const getTimeSlots = () => {
 
 export const isDateExistInWeek = (week, date) => {
   return week.find((day) => dayjs(day).isSame(date, "day"));
+};
+
+export const getNearestQuaterlySlot = (fromDate) => {
+  let initialMinutes = dayjs().minute();
+  let currentMinutes = initialMinutes;
+  while (currentMinutes % 15 !== 0) {
+    currentMinutes += 1;
+  }
+
+  return dayjs(fromDate).add(currentMinutes - initialMinutes, "minutes");
 };

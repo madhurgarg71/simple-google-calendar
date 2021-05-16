@@ -21,20 +21,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DEFAULT_TITLE = "(No Title)";
+function EditEventPopup(props, ref) {
+  const { isOpen = true, onClose, onSave, event } = props;
 
-function CreateEventPopup(props, ref) {
-  const {
-    isOpen = true,
-    onClose,
-    onSave,
-    scrollGrid,
-    fromDate,
-    toDate,
-  } = props;
-  const [from, setFrom] = useState(fromDate);
-  const [to, setTo] = useState(toDate);
-  const [title, setTitle] = useState();
+  const [from, setFrom] = useState(event.fromDate);
+  const [to, setTo] = useState(event.toDate);
+  const [title, setTitle] = useState(event.title);
   const [fromDateError, setFromDateError] = useState();
   const classes = useStyles();
 
@@ -44,7 +36,7 @@ function CreateEventPopup(props, ref) {
 
   const handleSave = () => {
     onSave({
-      title: title ?? DEFAULT_TITLE,
+      title,
       from,
       to,
     });
@@ -83,8 +75,6 @@ function CreateEventPopup(props, ref) {
   useEffect(() => {
     /* eslint-disable */
     validateFromDate();
-    const scrollAmount = from.hour() * 60 + from.minute();
-    scrollGrid(scrollAmount);
   }, [from, to]);
 
   useImperativeHandle(
@@ -99,7 +89,7 @@ function CreateEventPopup(props, ref) {
   return (
     <div>
       <Dialog className={classes.root} open={isOpen} onClose={handleClose}>
-        <DialogTitle>Create new event</DialogTitle>
+        <DialogTitle>Edit event</DialogTitle>
         <DialogContent>
           <TextField
             value={title}
@@ -137,4 +127,4 @@ function CreateEventPopup(props, ref) {
     </div>
   );
 }
-export default forwardRef(CreateEventPopup);
+export default forwardRef(EditEventPopup);

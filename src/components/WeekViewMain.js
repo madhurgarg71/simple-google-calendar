@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { Typography, Fab, makeStyles } from "@material-ui/core";
 
 import WeekGrid from "./WeekGrid";
@@ -10,12 +10,16 @@ import {
   getCurrentWeek,
   getPreviousWeek,
   getNextWeek,
+  getNearestQuaterlySlot,
 } from "../utils";
 
 import { DIRECTIONS } from "../constants";
 import { Add } from "@material-ui/icons";
 import CreateEventPopup from "./CreateEventPopup";
 import { CalendarContext } from "../Context";
+import dayjs from "dayjs";
+import EditEventPopup from "./EditEventPopup";
+import SuccessEventAlert from "./SuccessEventAlert";
 
 const useStyles = makeStyles((theme) => ({
   createEventBtn: {
@@ -35,12 +39,24 @@ function MonthSelector(props) {
   );
 }
 
+function getDefaultEventDates() {
+  const from = getNearestQuaterlySlot(dayjs());
+  const to = from.add(1, "hour");
+  return { defaultFromDate: from, defaultToDate: to };
+}
+
 function WeekViewMain(props) {
   const [activeWeek, setActiveWeek] = useState([]);
   const [activeMonth, setActiveMonth] = useState(null);
   const [showCreateEventPopup, setShowCreateEventPopup] = useState(false);
-  const { createEvent } = useContext(CalendarContext);
+  const [selectedFromDate, setSelectedFromDate] = useState();
+  const [selecetdToDate, setSelectedToDate] = useState();
+  const [selectedEvent, setSelectedEvent] = useState();
+  const [showSuccessAlert, setShowSuccessALert] = useState(false);
+  const { createEvent, editEvent } = useContext(CalendarContext);
   const classes = useStyles();
+  const gridContainerRef = useRef();
+  const eventPopupRef = useRef();
 
   const setDefaultWeek = () => {
     let week = getCurrentWeek();
@@ -61,8 +77,27 @@ function WeekViewMain(props) {
     setDefaultWeek();
   };
 
-  const openEventCreatePopup = () => {
+  const openEventCreatePopup = (from, to) => {
     setShowCreateEventPopup(true);
+    setSelectedFromDate(from);
+    setSelectedToDate(to);
+  };
+
+  const openEventEditPopup = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCreateEvent = () => {
+    const { defaultFromDate, defaultToDate } = getDefaultEventDates();
+    openEventCreatePopup(defaultFromDate, defaultToDate);
+  };
+
+  const onSuccess = () => {
+    setShowSuccessALert(true);
+  };
+
+  const scrollGrid = (amount) => {
+    gridContainerRef.current.scroll(amount);
   };
 
   useEffect(() => {
@@ -73,6 +108,7 @@ function WeekViewMain(props) {
   useEffect(() => {
     setDefaultWeek();
   }, []);
+
   return (
     <div>
       <NavigationBar
@@ -84,19 +120,47 @@ function WeekViewMain(props) {
       />
 
       <WeekHeader activeWeek={activeWeek} />
-      <WeekGrid activeWeek={activeWeek} />
+      <WeekGrid
+        eventPopupRef={eventPopupRef}
+        openEventCreatePopup={openEventCreatePopup}
+        openEventEditPopup={openEventEditPopup}
+        ref={gridContainerRef}
+        activeWeek={activeWeek}
+      />
       <Fab
-        onClick={openEventCreatePopup}
+        onClick={handleCreateEvent}
         className={classes.createEventBtn}
         color="primary"
       >
         <Add />
       </Fab>
 
-      <CreateEventPopup
-        isOpen={showCreateEventPopup}
-        onClose={() => setShowCreateEventPopup(false)}
-        onSave={({ title, from, to }) => createEvent(title, from, to)}
+      {showCreateEventPopup && (
+        <CreateEventPopup
+          fromDate={selectedFromDate}
+          toDate={selecetdToDate}
+          isOpen={true}
+          onClose={() => setShowCreateEventPopup(false)}
+          onSave={({ title, from, to }) =>
+            createEvent({ title, from, to }, onSuccess)
+          }
+          scrollGrid={scrollGrid}
+        />
+      )}
+      {selectedEvent && (
+        <EditEventPopup
+          isOpen={true}
+          event={selectedEvent}
+          onClose={() => setSelectedEvent()}
+          onSave={({ title, from, to }) =>
+            editEvent(selectedEvent.id, { title, from, to }, onSuccess)
+          }
+        />
+      )}
+
+      <SuccessEventAlert
+        open={showSuccessAlert}
+        onClose={() => setShowSuccessALert(false)}
       />
     </div>
   );

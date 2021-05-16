@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 import { TIME_SLOT_HEIGHT } from "../constants";
+import dayjs from "dayjs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -11,9 +12,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function HourSlice(from, to) {
+function HourSlice(props) {
+  const { from, to } = props;
   const classes = useStyles();
-  return <div className={`hour-slice ${classes.root}`}></div>;
+
+  return (
+    <div
+      data-from={dayjs(from).format("YYYY-MM-DDTHH:mm")}
+      data-to={dayjs(to).format("YYYY-MM-DDTHH:mm")}
+      className={`hour-slice ${classes.root}`}
+    ></div>
+  );
 }
 
 export default HourSlice;

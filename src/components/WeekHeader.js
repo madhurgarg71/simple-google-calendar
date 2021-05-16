@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     backgroundColor: "#fff",
     paddingLeft: 85,
+    paddingRight: 15,
     zIndex: 2,
   },
 }));
