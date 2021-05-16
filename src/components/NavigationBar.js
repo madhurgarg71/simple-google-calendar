@@ -65,7 +65,7 @@ export default function NavigationBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6">Google Calendar</Typography>
+          <Typography variant="h6">Gogole Calendar</Typography>
           <TodayButton onClick={onClickToday} classes={classes} />
           <NavigationControl onChange={onNavigationChange} classes={classes} />
           {render(classes)}
