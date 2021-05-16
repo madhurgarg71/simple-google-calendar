@@ -1,6 +1,6 @@
 # Simple google calendar
 
-## Features available
+## What's there and what's not
 
 - [x] Week view with default week set to current week
 - [x] Navigate to previous/next week
