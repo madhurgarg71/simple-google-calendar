@@ -9,6 +9,9 @@
 - [x] View any event on the calendar
 - [x] Re-schedule an event
 - [x] Delete an event
+- [ ] Drag n drop
+- [ ] View event on hover
+- [ ] Persistent storage
 
 ## Setup
 
